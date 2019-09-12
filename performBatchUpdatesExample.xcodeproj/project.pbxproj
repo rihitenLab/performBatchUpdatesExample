@@ -14,6 +14,8 @@
 		A8891AA02328DCF1001A2D92 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A8891A9E2328DCF1001A2D92 /* LaunchScreen.storyboard */; };
 		A8891AAB2328DCF1001A2D92 /* performBatchUpdatesExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8891AAA2328DCF1001A2D92 /* performBatchUpdatesExampleTests.swift */; };
 		A8891AB62328DCF1001A2D92 /* performBatchUpdatesExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8891AB52328DCF1001A2D92 /* performBatchUpdatesExampleUITests.swift */; };
+		A8891AC42328FCD2001A2D92 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8891AC32328FCD2001A2D92 /* DateExtension.swift */; };
+		A8891AC62329E0E2001A2D92 /* test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8891AC52329E0E2001A2D92 /* test.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		A8891AB12328DCF1001A2D92 /* performBatchUpdatesExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = performBatchUpdatesExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8891AB52328DCF1001A2D92 /* performBatchUpdatesExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = performBatchUpdatesExampleUITests.swift; sourceTree = "<group>"; };
 		A8891AB72328DCF1001A2D92 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A8891AC32328FCD2001A2D92 /* DateExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
+		A8891AC52329E0E2001A2D92 /* test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = test.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,12 +101,14 @@
 		A8891A942328DCEF001A2D92 /* performBatchUpdatesExample */ = {
 			isa = PBXGroup;
 			children = (
+				A8891AC32328FCD2001A2D92 /* DateExtension.swift */,
 				A8891A952328DCEF001A2D92 /* AppDelegate.swift */,
 				A8891A972328DCEF001A2D92 /* ViewController.swift */,
 				A8891A992328DCEF001A2D92 /* Main.storyboard */,
 				A8891A9C2328DCF1001A2D92 /* Assets.xcassets */,
 				A8891A9E2328DCF1001A2D92 /* LaunchScreen.storyboard */,
 				A8891AA12328DCF1001A2D92 /* Info.plist */,
+				A8891AC52329E0E2001A2D92 /* test.swift */,
 			);
 			path = performBatchUpdatesExample;
 			sourceTree = "<group>";
@@ -257,6 +263,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A8891A982328DCEF001A2D92 /* ViewController.swift in Sources */,
+				A8891AC62329E0E2001A2D92 /* test.swift in Sources */,
+				A8891AC42328FCD2001A2D92 /* DateExtension.swift in Sources */,
 				A8891A962328DCEF001A2D92 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,6 +441,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = performBatchUpdatesExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -450,6 +459,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = performBatchUpdatesExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
