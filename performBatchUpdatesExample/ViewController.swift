@@ -100,18 +100,58 @@ class ViewController: UIViewController {
     
     var order: Order = .id
     var sections: [Section]?
+    var newSections: [Section] {
+        var newSections = [Section]()
+        switch order {
+        case .id:
+            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
+            sections.forEach { section in
+                newSections.append(Section(title: section.key, students: section.value.sorted { $0.id < $1.id }))
+            }
+        case .birthday:
+            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
+            sections.forEach { section in
+                newSections.append(Section(title: section.key, students: section.value.sorted { $0.birthday < $1.birthday }))
+            }
+        case .height:
+            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
+            sections.forEach { section in
+                newSections.append(Section(title: section.key, students: section.value.sorted { $0.height < $1.height }))
+            }
+        }
+        
+        if newSections.count < collectionView.numberOfSections {
+            for _ in 0..<(collectionView.numberOfSections - newSections.count) {
+                newSections.append(Section(title: nil, students: []))
+            }
+        }
+        return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         collectionView.dataSource = self
         collectionView.delegate = self
-        sections = getNewSections()
+        sections = newSections
+        collectionView.reloadData()
     }
     
     @IBAction func selectedSegment(_ sender: UISegmentedControl) {
         order = Order(rawValue: sender.selectedSegmentIndex) ?? .id
-        let newSections = getNewSections()
+        let newSections = self.newSections
+        
+        UIView.performWithoutAnimation {
+            collectionView.performBatchUpdates({
+                if collectionView.numberOfSections < newSections.count {
+                    for count in collectionView.numberOfSections..<newSections.count {
+                        collectionView.insertSections(IndexSet(integer: count))
+                        sections?.append(Section(title: nil, students: []))
+                    }
+                }
+            }, completion: nil)
+        }
+        
         
         collectionView.performBatchUpdates({
             for oldSectionIndex in 0..<(sections?.count ?? 1) {
@@ -124,52 +164,8 @@ class ViewController: UIViewController {
             }
             self.sections = newSections
         }, completion: { success in
-            self.collectionView.reloadSections(IndexSet(integersIn: 0..<3))
+            self.collectionView.reloadData()
         })
-    }
-    
-    func getNewSections() -> [Section] {
-        switch order {
-        case .id:
-            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
-            var newSections = [Section]()
-            
-            sections.forEach { section in
-                newSections.append(Section(title: section.key, students: section.value.sorted { $0.id < $1.id }))
-            }
-            if newSections.count < 3 {
-                for _ in 0..<(3 - newSections.count) {
-                    newSections.append(Section(title: nil, students: []))
-                }
-            }
-            return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
-        case .birthday:
-            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
-            var newSections = [Section]()
-            
-            sections.forEach { section in
-                newSections.append(Section(title: section.key, students: section.value.sorted { $0.birthday < $1.birthday }))
-            }
-            if newSections.count < 3 {
-                for _ in 0..<(3 - newSections.count) {
-                    newSections.append(Section(title: nil, students: []))
-                }
-            }
-            return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
-        case .height:
-            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
-            var newSections = [Section]()
-            
-            sections.forEach { section in
-                newSections.append(Section(title: section.key, students: section.value.sorted { $0.height < $1.height }))
-            }
-            if newSections.count < 3 {
-                for _ in 0..<(3 - newSections.count) {
-                    newSections.append(Section(title: nil, students: []))
-                }
-            }
-            return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
-        }
     }
 }
 
@@ -193,7 +189,7 @@ extension ViewController: UICollectionViewDataSource {
 extension ViewController: UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 3
+        return sections?.count ?? 1
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
