@@ -39,7 +39,7 @@ class StudentCollectionViewCell: UICollectionViewCell {
     var birthday: Date? {
         didSet {
             let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = ""
+            dateFormatter.dateFormat = "yyyy/MM/dd"
             birthdayLabel.text = dateFormatter.string(from: self.birthday ?? Date())
         }
     }
@@ -62,10 +62,10 @@ struct Student {
     let birthday: Date
     let height: Int
     
-    func getTitle(order: ViewController.Order) -> String {
+    func getTitle(order: Order) -> String? {
         switch order {
         case .id:
-            return ""
+            return nil
         case .birthday:
             return birthday.startOfMonth.toString(format: "yyyy/MM")
         case .height:
@@ -74,33 +74,33 @@ struct Student {
     }
 }
 
+enum Order: Int {
+    case id
+    case birthday
+    case height
+}
+
 class ViewController: UIViewController {
     
     let students: [Student] = [
-        Student(id: 1, name: "あいうえお", birthday: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, height: 194),
-        Student(id: 2, name: "かきくけこ", birthday: Calendar.current.date(byAdding: .day, value: -31, to: Date())!, height: 156),
-        Student(id: 3, name: "さしすせそ", birthday: Calendar.current.date(byAdding: .day, value: -61, to: Date())!, height: 172),
-        Student(id: 4, name: "たちつてと", birthday: Calendar.current.date(byAdding: .day, value: -91, to: Date())!, height: 163),
-        Student(id: 5, name: "なにぬねの", birthday: Calendar.current.date(byAdding: .day, value: -121, to: Date())!, height: 189),
-        Student(id: 6, name: "はひふへほ", birthday: Calendar.current.date(byAdding: .day, value: -151, to: Date())!, height: 181),
-        Student(id: 7, name: "まみむめも", birthday: Calendar.current.date(byAdding: .day, value: -181, to: Date())!, height: 177),
-        Student(id: 8, name: "やいゆえよ", birthday: Calendar.current.date(byAdding: .day, value: -211, to: Date())!, height: 169),
-        Student(id: 9, name: "らりるれろ", birthday: Calendar.current.date(byAdding: .day, value: -241, to: Date())!, height: 154),
-        Student(id: 10, name: "わいうえを", birthday: Calendar.current.date(byAdding: .day, value: -271, to: Date())!, height: 149),
+        Student(id: 1, name: "あいうえお", birthday: Calendar.current.date(byAdding: .day, value: -152, to: Date())!, height: 192),
+        Student(id: 2, name: "かきくけこ", birthday: Calendar.current.date(byAdding: .day, value: -154, to: Date())!, height: 165),
+        Student(id: 3, name: "さしすせそ", birthday: Calendar.current.date(byAdding: .day, value: -95, to: Date())!, height: 194),
+        Student(id: 4, name: "たちつてと", birthday: Calendar.current.date(byAdding: .day, value: -99, to: Date())!, height: 177),
+        Student(id: 5, name: "なにぬねの", birthday: Calendar.current.date(byAdding: .day, value: -92, to: Date())!, height: 196),
+        Student(id: 6, name: "はひふへほ", birthday: Calendar.current.date(byAdding: .day, value: -151, to: Date())!, height: 193),
+        Student(id: 7, name: "まみむめも", birthday: Calendar.current.date(byAdding: .day, value: -155, to: Date())!, height: 173),
+        Student(id: 8, name: "やいゆえよ", birthday: Calendar.current.date(byAdding: .day, value: -159, to: Date())!, height: 162),
+        Student(id: 9, name: "らりるれろ", birthday: Calendar.current.date(byAdding: .day, value: -153, to: Date())!, height: 191),
+        Student(id: 10, name: "わいうえを", birthday: Calendar.current.date(byAdding: .day, value: -1, to: Date())!, height: 169),
     ]
-    
-    enum Order: Int {
-        case id
-        case birthday
-        case height
-    }
-    
+
     @IBOutlet private weak var segmentedControl: UISegmentedControl!
     @IBOutlet private weak var collectionView: UICollectionView!
     
     var order: Order = .id
     var sections: [Section]?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -114,36 +114,46 @@ class ViewController: UIViewController {
         let newSections = getNewSections()
         
         collectionView.performBatchUpdates({
-            if newSections.count - (sections?.count ?? 0) > 0 {
-                collectionView.insertSections(IndexSet(integersIn: (sections?.count ?? 0)..<newSections.count))
-            }
-            
             for oldSectionIndex in 0..<(sections?.count ?? 1) {
                 for oldStudentIndex in 0..<(sections?[oldSectionIndex].students.count ?? 0) {
                     let movedSectionIndex = newSections.firstIndex { $0.title == sections?[oldSectionIndex].students[oldStudentIndex].getTitle(order: order) }
-                    let movedItemIndex = newSections[movedSectionIndex ?? 0].students.firstIndex { $0.id == sections?[oldSectionIndex].students[oldStudentIndex].id }
+                    let movedItemIndex = newSections[movedSectionIndex ?? 0].students.firstIndex { $0.name == sections?[oldSectionIndex].students[oldStudentIndex].name }
                     let movedIndexPath = IndexPath(item: movedItemIndex ?? 0, section: movedSectionIndex ?? 0)
                     collectionView.moveItem(at: IndexPath(item: oldStudentIndex, section: oldSectionIndex), to: movedIndexPath)
                 }
             }
-            
-            if (sections?.count ?? 0) - newSections.count > 0 {
-                collectionView.deleteSections(IndexSet(integersIn: newSections.count..<(sections?.count ?? 0)))
-            }
             self.sections = newSections
-        }, completion: nil)
+        }, completion: { success in
+            self.collectionView.reloadSections(IndexSet(integersIn: 0..<3))
+        })
     }
     
     func getNewSections() -> [Section] {
         switch order {
         case .id:
-            return [Section(title: nil, students: students.sorted{ $0.id < $1.id })]
+            let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
+            var newSections = [Section]()
+            
+            sections.forEach { section in
+                newSections.append(Section(title: section.key, students: section.value.sorted { $0.id < $1.id }))
+            }
+            if newSections.count < 3 {
+                for _ in 0..<(3 - newSections.count) {
+                    newSections.append(Section(title: nil, students: []))
+                }
+            }
+            return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
         case .birthday:
             let sections = Dictionary(grouping: students, by: { $0.getTitle(order: order) })
             var newSections = [Section]()
             
             sections.forEach { section in
                 newSections.append(Section(title: section.key, students: section.value.sorted { $0.birthday < $1.birthday }))
+            }
+            if newSections.count < 3 {
+                for _ in 0..<(3 - newSections.count) {
+                    newSections.append(Section(title: nil, students: []))
+                }
             }
             return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
         case .height:
@@ -152,6 +162,11 @@ class ViewController: UIViewController {
             
             sections.forEach { section in
                 newSections.append(Section(title: section.key, students: section.value.sorted { $0.height < $1.height }))
+            }
+            if newSections.count < 3 {
+                for _ in 0..<(3 - newSections.count) {
+                    newSections.append(Section(title: nil, students: []))
+                }
             }
             return newSections.sorted { $0.title ?? "" > $1.title ?? "" }
         }
@@ -178,13 +193,13 @@ extension ViewController: UICollectionViewDataSource {
 extension ViewController: UICollectionViewDelegate {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return sections?.count ?? 0
+        return 3
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader,
                                                                            withReuseIdentifier: "header", for: indexPath) as? StudentCollectionViewHeader else {
-            fatalError("Could not find proper header")
+                                                                            fatalError("Could not find proper header")
         }
         
         if kind == UICollectionView.elementKindSectionHeader {
@@ -205,7 +220,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        guard let _ = sections?.first?.title else { return CGSize.zero }
+        guard sections?[section].title != nil else { return CGSize.zero }
         return CGSize(width: collectionView.bounds.width, height: 50)
     }
 }
