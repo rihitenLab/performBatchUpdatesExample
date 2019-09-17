@@ -152,7 +152,6 @@ class ViewController: UIViewController {
             }, completion: nil)
         }
         
-        
         collectionView.performBatchUpdates({
             for oldSectionIndex in 0..<(sections?.count ?? 1) {
                 for oldStudentIndex in 0..<(sections?[oldSectionIndex].students.count ?? 0) {
@@ -164,7 +163,7 @@ class ViewController: UIViewController {
             }
             self.sections = newSections
         }, completion: { success in
-            self.collectionView.reloadData()
+            self.collectionView.reloadSections(IndexSet(integersIn: 0..<self.collectionView.numberOfSections))
         })
     }
 }
