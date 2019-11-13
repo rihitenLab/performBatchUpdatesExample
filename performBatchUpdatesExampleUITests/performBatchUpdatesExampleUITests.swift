@@ -2,7 +2,7 @@
 //  performBatchUpdatesExampleUITests.swift
 //  performBatchUpdatesExampleUITests
 //
-//  Created by 松岡 利人 on 2019/09/11.
+//  Created by rihitenlab on 2019/09/11.
 //  Copyright © 2019 rihitenLab. All rights reserved.
 //
 

@@ -2,7 +2,7 @@
 //  DateExtension.swift
 //  Entry
 //
-//  Created by 松岡 利人 on 2019/08/26.
+//  Created by rihitenLab on 2019/08/26.
 //
 
 import Foundation
